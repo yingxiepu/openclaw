@@ -43,9 +43,9 @@ export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv =
   if (normalizedOpts.nonInteractive && normalizedOpts.acceptRisk !== true) {
     runtime.error(
       [
-        "Non-interactive onboarding requires explicit risk acknowledgement.",
-        "Read: https://docs.openclaw.ai/security",
-        `Re-run with: ${formatCliCommand("openclaw onboard --non-interactive --accept-risk ...")}`,
+        "非交互式入门向导需要明确的风险确认。",
+        "阅读：https://docs.openclaw.ai/security",
+        `重新运行：${formatCliCommand("openclaw onboard --non-interactive --accept-risk ...")}`,
       ].join("\n"),
     );
     runtime.exit(1);
@@ -63,10 +63,10 @@ export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv =
   if (process.platform === "win32") {
     runtime.log(
       [
-        "Windows detected — OpenClaw runs great on WSL2!",
-        "Native Windows might be trickier.",
-        "Quick setup: wsl --install (one command, one reboot)",
-        "Guide: https://docs.openclaw.ai/windows",
+        "检测到 Windows — OpenClaw 在 WSL2 上运行良好！",
+        "原生 Windows 可能会更复杂一些。",
+        "快速设置：wsl --install（一个命令，一次重启）",
+        "指南：https://docs.openclaw.ai/windows",
       ].join("\n"),
     );
   }

@@ -57,12 +57,12 @@ export function renderLogs(props: LogsProps) {
     <section class="card">
       <div class="row" style="justify-content: space-between;">
         <div>
-          <div class="card-title">Logs</div>
-          <div class="card-sub">Gateway file logs (JSONL).</div>
+          <div class="card-title">日志</div>
+          <div class="card-sub">网关文件日志（JSONL）。</div>
         </div>
         <div class="row" style="gap: 8px;">
           <button class="btn" ?disabled=${props.loading} @click=${props.onRefresh}>
-            ${props.loading ? "Loading…" : "Refresh"}
+            ${props.loading ? "加载中…" : "刷新"}
           </button>
           <button
             class="btn"
@@ -73,22 +73,22 @@ export function renderLogs(props: LogsProps) {
                 exportLabel,
               )}
           >
-            Export ${exportLabel}
+            导出 ${exportLabel === "filtered" ? "筛选" : "可见"}
           </button>
         </div>
       </div>
 
       <div class="filters" style="margin-top: 14px;">
         <label class="field" style="min-width: 220px;">
-          <span>Filter</span>
+          <span>筛选</span>
           <input
             .value=${props.filterText}
             @input=${(e: Event) => props.onFilterTextChange((e.target as HTMLInputElement).value)}
-            placeholder="Search logs"
+            placeholder="搜索日志"
           />
         </label>
         <label class="field checkbox">
-          <span>Auto-follow</span>
+          <span>自动跟随</span>
           <input
             type="checkbox"
             .checked=${props.autoFollow}
@@ -116,13 +116,13 @@ export function renderLogs(props: LogsProps) {
 
       ${
         props.file
-          ? html`<div class="muted" style="margin-top: 10px;">File: ${props.file}</div>`
+          ? html`<div class="muted" style="margin-top: 10px;">文件：${props.file}</div>`
           : nothing
       }
       ${
         props.truncated
           ? html`
-              <div class="callout" style="margin-top: 10px">Log output truncated; showing latest chunk.</div>
+              <div class="callout" style="margin-top: 10px">日志输出已截断；显示最新块。</div>
             `
           : nothing
       }
@@ -136,7 +136,7 @@ export function renderLogs(props: LogsProps) {
         ${
           filtered.length === 0
             ? html`
-                <div class="muted" style="padding: 12px">No log entries.</div>
+                <div class="muted" style="padding: 12px">没有日志条目。</div>
               `
             : filtered.map(
                 (entry) => html`

@@ -35,9 +35,9 @@ export type SessionsProps = {
 const THINK_LEVELS = ["", "off", "minimal", "low", "medium", "high"] as const;
 const BINARY_THINK_LEVELS = ["", "off", "on"] as const;
 const VERBOSE_LEVELS = [
-  { value: "", label: "inherit" },
-  { value: "off", label: "off (explicit)" },
-  { value: "on", label: "on" },
+  { value: "", label: "继承" },
+  { value: "off", label: "关闭（明确）" },
+  { value: "on", label: "开启" },
 ] as const;
 const REASONING_LEVELS = ["", "off", "on", "stream"] as const;
 
@@ -89,17 +89,17 @@ export function renderSessions(props: SessionsProps) {
     <section class="card">
       <div class="row" style="justify-content: space-between;">
         <div>
-          <div class="card-title">Sessions</div>
-          <div class="card-sub">Active session keys and per-session overrides.</div>
+          <div class="card-title">会话</div>
+          <div class="card-sub">活动会话密钥和每个会话的覆盖设置。</div>
         </div>
         <button class="btn" ?disabled=${props.loading} @click=${props.onRefresh}>
-          ${props.loading ? "Loading…" : "Refresh"}
+          ${props.loading ? "加载中…" : "刷新"}
         </button>
       </div>
 
       <div class="filters" style="margin-top: 14px;">
         <label class="field">
-          <span>Active within (minutes)</span>
+          <span>活动时间（分钟）</span>
           <input
             .value=${props.activeMinutes}
             @input=${(e: Event) =>
@@ -112,7 +112,7 @@ export function renderSessions(props: SessionsProps) {
           />
         </label>
         <label class="field">
-          <span>Limit</span>
+          <span>限制</span>
           <input
             .value=${props.limit}
             @input=${(e: Event) =>
@@ -125,7 +125,7 @@ export function renderSessions(props: SessionsProps) {
           />
         </label>
         <label class="field checkbox">
-          <span>Include global</span>
+          <span>包含全局</span>
           <input
             type="checkbox"
             .checked=${props.includeGlobal}
@@ -139,7 +139,7 @@ export function renderSessions(props: SessionsProps) {
           />
         </label>
         <label class="field checkbox">
-          <span>Include unknown</span>
+          <span>包含未知</span>
           <input
             type="checkbox"
             .checked=${props.includeUnknown}
@@ -161,25 +161,25 @@ export function renderSessions(props: SessionsProps) {
       }
 
       <div class="muted" style="margin-top: 12px;">
-        ${props.result ? `Store: ${props.result.path}` : ""}
+        ${props.result ? `存储：${props.result.path}` : ""}
       </div>
 
       <div class="table" style="margin-top: 16px;">
         <div class="table-head">
-          <div>Key</div>
-          <div>Label</div>
-          <div>Kind</div>
-          <div>Updated</div>
-          <div>Tokens</div>
-          <div>Thinking</div>
-          <div>Verbose</div>
-          <div>Reasoning</div>
-          <div>Actions</div>
+          <div>密钥</div>
+          <div>标签</div>
+          <div>类型</div>
+          <div>更新</div>
+          <div>令牌</div>
+          <div>思考</div>
+          <div>详细</div>
+          <div>推理</div>
+          <div>操作</div>
         </div>
         ${
           rows.length === 0
             ? html`
-                <div class="muted">No sessions found.</div>
+                <div class="muted">未找到会话。</div>
               `
             : rows.map((row) =>
                 renderRow(row, props.basePath, props.onPatch, props.onDelete, props.loading),
@@ -219,7 +219,7 @@ function renderRow(
         <input
           .value=${row.label ?? ""}
           ?disabled=${disabled}
-          placeholder="(optional)"
+          placeholder="（可选）"
           @change=${(e: Event) => {
             const value = (e.target as HTMLInputElement).value.trim();
             onPatch(row.key, { label: value || null });
@@ -240,7 +240,7 @@ function renderRow(
             });
           }}
         >
-          ${thinkLevels.map((level) => html`<option value=${level}>${level || "inherit"}</option>`)}
+          ${thinkLevels.map((level) => html`<option value=${level}>${level || "继承"}</option>`)}
         </select>
       </div>
       <div>
@@ -267,13 +267,13 @@ function renderRow(
           }}
         >
           ${REASONING_LEVELS.map(
-            (level) => html`<option value=${level}>${level || "inherit"}</option>`,
+            (level) => html`<option value=${level}>${level || "继承"}</option>`,
           )}
         </select>
       </div>
       <div>
         <button class="btn danger" ?disabled=${disabled} @click=${() => onDelete(row.key)}>
-          Delete
+          删除
         </button>
       </div>
     </div>

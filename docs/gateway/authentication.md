@@ -1,34 +1,33 @@
 ---
-summary: "Model authentication: OAuth, API keys, and setup-token"
+summary: "模型认证：OAuth、API 密钥和 setup-token"
 read_when:
-  - Debugging model auth or OAuth expiry
-  - Documenting authentication or credential storage
-title: "Authentication"
+  - 调试模型认证或 OAuth 过期问题
+  - 记录认证或凭证存储
+title: "认证"
 ---
 
-# Authentication
+# 认证
 
-OpenClaw supports OAuth and API keys for model providers. For Anthropic
-accounts, we recommend using an **API key**. For Claude subscription access,
-use the long‑lived token created by `claude setup-token`.
+OpenClaw 支持 OAuth 和 API 密钥用于模型提供商。对于 Anthropic
+账户，我们建议使用 **API 密钥**。对于 Claude 订阅访问，
+请使用由 `claude setup-token` 创建的长效令牌。
 
-See [/concepts/oauth](/concepts/oauth) for the full OAuth flow and storage
-layout.
+有关完整的 OAuth 流程和存储布局，请参阅 [/concepts/oauth](/concepts/oauth)。
 
-## Recommended Anthropic setup (API key)
+## 推荐的 Anthropic 设置（API 密钥）
 
-If you’re using Anthropic directly, use an API key.
+如果您直接使用 Anthropic，请使用 API 密钥。
 
-1. Create an API key in the Anthropic Console.
-2. Put it on the **gateway host** (the machine running `openclaw gateway`).
+1. 在 Anthropic 控制台中创建 API 密钥。
+2. 将其放在 **网关主机**上（运行 `openclaw gateway` 的机器）。
 
 ```bash
 export ANTHROPIC_API_KEY="..."
 openclaw models status
 ```
 
-3. If the Gateway runs under systemd/launchd, prefer putting the key in
-   `~/.openclaw/.env` so the daemon can read it:
+3. 如果网关在 systemd/launchd 下运行，建议将密钥放在
+   `~/.openclaw/.env` 中，以便守护进程可以读取它：
 
 ```bash
 cat >> ~/.openclaw/.env <<'EOF'
@@ -36,84 +35,84 @@ ANTHROPIC_API_KEY=...
 EOF
 ```
 
-Then restart the daemon (or restart your Gateway process) and re-check:
+然后重启守护进程（或重启您的网关进程）并重新检查：
 
 ```bash
 openclaw models status
 openclaw doctor
 ```
 
-If you’d rather not manage env vars yourself, the onboarding wizard can store
-API keys for daemon use: `openclaw onboard`.
+如果您不想自己管理环境变量，入门向导可以为守护进程存储
+API 密钥：`openclaw onboard`。
 
-See [Help](/help) for details on env inheritance (`env.shellEnv`,
-`~/.openclaw/.env`, systemd/launchd).
+有关环境变量继承的详细信息（`env.shellEnv`、
+`~/.openclaw/.env`、systemd/launchd），请参阅 [帮助](/help)。
 
-## Anthropic: setup-token (subscription auth)
+## Anthropic：setup-token（订阅认证）
 
-For Anthropic, the recommended path is an **API key**. If you’re using a Claude
-subscription, the setup-token flow is also supported. Run it on the **gateway host**:
+对于 Anthropic，推荐的方式是使用 **API 密钥**。如果您使用的是 Claude
+订阅，也支持 setup-token 流程。在 **网关主机**上运行：
 
 ```bash
 claude setup-token
 ```
 
-Then paste it into OpenClaw:
+然后将其粘贴到 OpenClaw：
 
 ```bash
 openclaw models auth setup-token --provider anthropic
 ```
 
-If the token was created on another machine, paste it manually:
+如果令牌是在另一台机器上创建的，请手动粘贴：
 
 ```bash
 openclaw models auth paste-token --provider anthropic
 ```
 
-If you see an Anthropic error like:
+如果您看到类似以下的 Anthropic 错误：
 
 ```
-This credential is only authorized for use with Claude Code and cannot be used for other API requests.
+此凭证仅授权用于 Claude Code，不能用于其他 API 请求。
 ```
 
-…use an Anthropic API key instead.
+…请改用 Anthropic API 密钥。
 
-Manual token entry (any provider; writes `auth-profiles.json` + updates config):
+手动令牌输入（任何提供商；写入 `auth-profiles.json` + 更新配置）：
 
 ```bash
 openclaw models auth paste-token --provider anthropic
 openclaw models auth paste-token --provider openrouter
 ```
 
-Automation-friendly check (exit `1` when expired/missing, `2` when expiring):
+自动化友好的检查（过期/缺失时退出 `1`，即将过期时退出 `2`）：
 
 ```bash
 openclaw models status --check
 ```
 
-Optional ops scripts (systemd/Termux) are documented here:
+可选的运维脚本（systemd/Termux）记录在此处：
 [/automation/auth-monitoring](/automation/auth-monitoring)
 
-> `claude setup-token` requires an interactive TTY.
+> `claude setup-token` 需要交互式 TTY。
 
-## Checking model auth status
+## 检查模型认证状态
 
 ```bash
 openclaw models status
 openclaw doctor
 ```
 
-## Controlling which credential is used
+## 控制使用哪个凭证
 
-### Per-session (chat command)
+### 每个会话（聊天命令）
 
-Use `/model <alias-or-id>@<profileId>` to pin a specific provider credential for the current session (example profile ids: `anthropic:default`, `anthropic:work`).
+使用 `/model <alias-or-id>@<profileId>` 为当前会话固定特定的提供商凭证（示例配置文件 ID：`anthropic:default`、`anthropic:work`）。
 
-Use `/model` (or `/model list`) for a compact picker; use `/model status` for the full view (candidates + next auth profile, plus provider endpoint details when configured).
+使用 `/model`（或 `/model list`）获取紧凑的选择器；使用 `/model status` 获取完整视图（候选 + 下一个认证配置文件，以及配置时的提供商端点详细信息）。
 
-### Per-agent (CLI override)
+### 每个代理（CLI 覆盖）
 
-Set an explicit auth profile order override for an agent (stored in that agent’s `auth-profiles.json`):
+为代理设置明确的认证配置文件顺序覆盖（存储在该代理的 `auth-profiles.json` 中）：
 
 ```bash
 openclaw models auth order get --provider anthropic
@@ -121,25 +120,25 @@ openclaw models auth order set --provider anthropic anthropic:default
 openclaw models auth order clear --provider anthropic
 ```
 
-Use `--agent <id>` to target a specific agent; omit it to use the configured default agent.
+使用 `--agent <id>` 定位特定代理；省略它以使用配置的默认代理。
 
-## Troubleshooting
+## 故障排除
 
-### “No credentials found”
+### "未找到凭证"
 
-If the Anthropic token profile is missing, run `claude setup-token` on the
-**gateway host**, then re-check:
+如果 Anthropic 令牌配置文件缺失，请在
+**网关主机**上运行 `claude setup-token`，然后重新检查：
 
 ```bash
 openclaw models status
 ```
 
-### Token expiring/expired
+### 令牌即将过期/已过期
 
-Run `openclaw models status` to confirm which profile is expiring. If the profile
-is missing, rerun `claude setup-token` and paste the token again.
+运行 `openclaw models status` 以确认哪个配置文件即将过期。如果配置文件
+缺失，请重新运行 `claude setup-token` 并再次粘贴令牌。
 
-## Requirements
+## 要求
 
-- Claude Max or Pro subscription (for `claude setup-token`)
-- Claude Code CLI installed (`claude` command available)
+- Claude Max 或 Pro 订阅（用于 `claude setup-token`）
+- 已安装 Claude Code CLI（`claude` 命令可用）

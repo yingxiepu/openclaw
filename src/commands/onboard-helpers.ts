@@ -28,7 +28,7 @@ import { VERSION } from "../version.js";
 
 export function guardCancel<T>(value: T | symbol, runtime: RuntimeEnv): T {
   if (isCancel(value)) {
-    cancel(stylePromptTitle("Setup cancelled.") ?? "Setup cancelled.");
+    cancel(stylePromptTitle("设置已取消。") ?? "设置已取消。");
     runtime.exit(0);
   }
   return value;
@@ -61,7 +61,7 @@ export function summarizeExistingConfig(config: OpenClawConfig): string {
   if (config.skills?.install?.nodeManager) {
     rows.push(shortenHomeInString(`skills.nodeManager: ${config.skills.install.nodeManager}`));
   }
-  return rows.length ? rows.join("\n") : "No key settings detected.";
+  return rows.length ? rows.join("\n") : "未检测到关键设置。";
 }
 
 export function randomToken(): string {
@@ -191,12 +191,12 @@ export function formatControlUiSshHint(params: {
   const authedUrl = params.token ? `${localUrl}${tokenParam}` : undefined;
   const sshTarget = resolveSshTargetHint();
   return [
-    "No GUI detected. Open from your computer:",
+    "未检测到图形界面。从您的计算机打开：",
     `ssh -N -L ${params.port}:127.0.0.1:${params.port} ${sshTarget}`,
-    "Then open:",
+    "然后打开：",
     localUrl,
     authedUrl,
-    "Docs:",
+    "文档：",
     "https://docs.openclaw.ai/gateway/remote",
     "https://docs.openclaw.ai/web/control-ui",
   ]
